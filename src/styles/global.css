@@ -1,0 +1,39 @@
+:root {
+  --bg-soft: #eef4fb;
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-strong: #ffffff;
+  --line: rgba(23, 32, 51, 0.08);
+  --text-main: #172033;
+  --text-secondary: #6b7894;
+  --accent: #14b8c5;
+  --accent-deep: #0f7f99;
+  --nav-bg: #092539;
+  --shadow-soft: 0 22px 50px rgba(16, 40, 70, 0.14);
+}
+
+body .el-message {
+  min-width: 240px;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.glass-panel {
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-soft);
+}
+
+.section-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.section-subtitle {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
