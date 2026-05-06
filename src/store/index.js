@@ -12,15 +12,23 @@ function getInitialAuthState() {
       return {
         token: '',
         accountId: '',
-        nickName: ''
+        nickName: '',
+        permission: 0
       };
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return {
+      token: parsed.token || '',
+      accountId: parsed.accountId || '',
+      nickName: parsed.nickName || '',
+      permission: Number(parsed.permission) || 0
+    };
   } catch (error) {
     return {
       token: '',
       accountId: '',
-      nickName: ''
+      nickName: '',
+      permission: 0
     };
   }
 }
@@ -35,6 +43,9 @@ export default new Vuex.Store({
     },
     userInfo(state) {
       return state.auth || {};
+    },
+    isBasicUser(state) {
+      return Number(state.auth && state.auth.permission) === 1;
     }
   },
   mutations: {
@@ -42,7 +53,8 @@ export default new Vuex.Store({
       state.auth = {
         token: payload.token || '',
         accountId: payload.accountId || '',
-        nickName: payload.nickName || ''
+        nickName: payload.nickName || '',
+        permission: Number(payload.permission) || 0
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state.auth));
     },
@@ -50,7 +62,8 @@ export default new Vuex.Store({
       state.auth = {
         token: '',
         accountId: '',
-        nickName: ''
+        nickName: '',
+        permission: 0
       };
       localStorage.removeItem(STORAGE_KEY);
     }

@@ -5,7 +5,7 @@
         <div class="sidebar-top">
           <div class="brand-mark"></div>
           <div>
-            <div class="brand-eyebrow">AI 面试应用</div>
+            <div class="brand-eyebrow">AI Interview Workspace</div>
             <div class="brand-title">Resume Console</div>
           </div>
         </div>
@@ -13,6 +13,11 @@
         <router-link class="nav-item" to="/app/resumes">
           <span class="nav-icon">简</span>
           <span>简历管理</span>
+        </router-link>
+
+        <router-link class="nav-item" to="/app/interviews">
+          <span class="nav-icon">面</span>
+          <span>模拟面试</span>
         </router-link>
       </div>
 
@@ -117,6 +122,7 @@ export default {
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
+  margin-bottom: 12px;
   border-radius: 18px;
   color: inherit;
   text-decoration: none;

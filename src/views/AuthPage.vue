@@ -145,7 +145,8 @@ export default {
             this.$store.commit('setAuth', {
               token: result.token,
               accountId: result.data.accountId,
-              nickName: result.data.nickName
+              nickName: result.data.nickName,
+              permission: result.data.permission ?? result.permission
             });
             this.$message.success('登录成功');
             this.$router.replace('/app/resumes');
