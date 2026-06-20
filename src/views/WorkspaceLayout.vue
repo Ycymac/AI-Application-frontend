@@ -5,8 +5,8 @@
         <div class="sidebar-top">
           <div class="brand-mark"></div>
           <div>
-            <div class="brand-eyebrow">AI Interview Workspace</div>
-            <div class="brand-title">Resume Console</div>
+            <div class="brand-eyebrow">AI Interview OS</div>
+            <div class="brand-title">RAG Evaluation</div>
           </div>
         </div>
 
@@ -47,6 +47,7 @@ export default {
   data() {
     return {
       navItems: [
+        { to: '/app/project-intro', label: '项目介绍', icon: '介' },
         { to: '/app/resumes', label: '简历管理', icon: '简' },
         { to: '/app/interviews', label: '模拟面试', icon: '面' },
         { to: '/app/knowledge-bases', label: '知识库管理', icon: '库', restricted: true },
@@ -88,22 +89,24 @@ export default {
 </script>
 
 <style scoped>
-.layout-shell { min-height: 100vh; display: flex; background: radial-gradient(circle at top left, rgba(20, 184, 197, 0.12), transparent 30%), linear-gradient(180deg, #edf4fa 0%, #f7f9fc 42%, #eff5fb 100%); }
-.sidebar { width: 288px; padding: 28px 22px; display: flex; flex-direction: column; justify-content: space-between; color: #eefbff; background: linear-gradient(180deg, #082132 0%, #0d3348 100%); box-shadow: 12px 0 36px rgba(4, 18, 31, 0.12); }
+.layout-shell { height: 100vh; overflow: hidden; display: flex; background: var(--bg-page); color: var(--text-main); }
+.sidebar { width: 288px; padding: 28px 22px; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; color: var(--nav-text); background: var(--nav-bg); border-right: 1px solid var(--line); }
 .sidebar-top { display: flex; align-items: center; gap: 14px; margin-bottom: 42px; }
-.brand-mark { width: 18px; height: 46px; border-radius: 999px; background: linear-gradient(180deg, #14b8c5, #76e2e8); }
-.brand-eyebrow { font-size: 12px; letter-spacing: 0.12em; color: rgba(238, 251, 255, 0.62); text-transform: uppercase; }
-.brand-title { margin-top: 4px; font-size: 22px; font-weight: 700; }
-.nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; margin-bottom: 12px; border-radius: 18px; color: inherit; text-decoration: none; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.24s ease, background 0.24s ease; }
-.nav-item:hover { transform: translateX(2px); background: rgba(255, 255, 255, 0.09); }
-.nav-item.router-link-exact-active { background: rgba(20, 184, 197, 0.18); border-color: rgba(118, 226, 232, 0.3); }
-.nav-icon { width: 28px; height: 28px; border-radius: 10px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.12); font-size: 13px; }
+.brand-mark { width: 18px; height: 46px; border-radius: var(--radius-pill); background: linear-gradient(180deg, var(--accent-cyan), var(--accent-violet), var(--accent-rose)); }
+.brand-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; color: var(--nav-muted); text-transform: uppercase; }
+.brand-title { margin-top: 4px; font-family: var(--font-display); font-size: 22px; font-weight: 650; letter-spacing: -0.03em; }
+.nav-item { position: relative; display: flex; align-items: center; gap: 12px; padding: 13px 14px; margin-bottom: 10px; border-radius: var(--radius-lg); color: inherit; text-decoration: none; background: var(--nav-item-bg); border: 1px solid var(--nav-item-border); transition: transform var(--duration-normal) var(--ease-product), background var(--duration-normal) var(--ease-product), border-color var(--duration-normal) var(--ease-product); }
+.nav-item::before { content: ''; position: absolute; left: -1px; top: 50%; width: 3px; height: 0; border-radius: var(--radius-pill); background: var(--accent-cyan); transform: translateY(-50%); transition: height var(--duration-normal) var(--ease-product); }
+.nav-item:hover { transform: translateX(2px); background: var(--nav-item-hover); }
+.nav-item.router-link-exact-active { background: var(--nav-item-active); border-color: var(--line-strong); }
+.nav-item.router-link-exact-active::before { height: 24px; }
+.nav-icon { width: 28px; height: 28px; border-radius: var(--radius-md); display: grid; place-items: center; background: var(--nav-item-hover); font-family: var(--font-mono); font-size: 12px; font-weight: 800; }
 .sidebar-bottom { display: flex; flex-direction: column; gap: 16px; }
-.user-card { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 20px; background: rgba(255, 255, 255, 0.08); }
-.user-avatar { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(180deg, #14b8c5, #1e90aa); font-weight: 700; }
+.user-card { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: var(--radius-lg); background: var(--nav-item-bg); border: 1px solid var(--nav-item-border); }
+.user-avatar { width: 42px; height: 42px; border-radius: var(--radius-md); display: grid; place-items: center; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet)); color: #fff; font-weight: 800; }
 .user-name { font-weight: 700; }
-.user-account { margin-top: 2px; font-size: 12px; color: rgba(238, 251, 255, 0.64); }
-.logout-btn { width: 100%; border-radius: 16px; border-color: rgba(255, 255, 255, 0.16); background: transparent; color: #eefbff; }
-.main-content { flex: 1; min-width: 0; }
-@media (max-width: 900px) { .layout-shell { flex-direction: column; } .sidebar { width: 100%; gap: 16px; } }
+.user-account { margin-top: 2px; font-size: 12px; color: var(--nav-muted); }
+.logout-btn { width: 100%; border-radius: var(--radius-lg); border-color: var(--nav-item-border); background: transparent; color: var(--nav-text); }
+.main-content { flex: 1; min-width: 0; height: 100vh; overflow-y: auto; }
+@media (max-width: 900px) { .layout-shell { height: auto; overflow: visible; flex-direction: column; } .sidebar { width: 100%; gap: 16px; overflow-y: visible; } .main-content { height: auto; } }
 </style>

@@ -72,6 +72,9 @@
               <div class="score-main">
                 <strong>{{ activeReport.report.interviewPoint }}</strong>
                 <span>分</span>
+                <span class="grade-pill" :class="gradeClass(activeReport.report.interviewPoint)">
+                  {{ gradeLabel(activeReport.report.interviewPoint) }}
+                </span>
               </div>
             </article>
 
@@ -172,6 +175,13 @@
           <div>
             <div class="record-name">{{ item.name }}</div>
             <div class="record-date">{{ formatDateTime(item.createTime) }}</div>
+            <span
+              v-if="item.interviewPoint !== null && item.interviewPoint !== undefined && item.interviewPoint !== ''"
+              class="record-grade"
+              :class="gradeClass(item.interviewPoint)"
+            >
+              {{ gradeLabel(item.interviewPoint) }}
+            </span>
           </div>
           <div class="record-score">{{ item.interviewPoint || '--' }}</div>
         </button>
@@ -595,6 +605,44 @@ export default {
       };
       return map[level] || 'is-medium';
     },
+    gradeLabel(score) {
+      const value = Number(score);
+      if (Number.isNaN(value)) {
+        return '未评定';
+      }
+      if (value >= 90) {
+        return '优秀';
+      }
+      if (value >= 80) {
+        return '良好';
+      }
+      if (value >= 70) {
+        return '中等';
+      }
+      if (value >= 60) {
+        return '及格';
+      }
+      return '不及格';
+    },
+    gradeClass(score) {
+      const value = Number(score);
+      if (Number.isNaN(value)) {
+        return 'grade-na';
+      }
+      if (value >= 90) {
+        return 'grade-excellent';
+      }
+      if (value >= 80) {
+        return 'grade-good';
+      }
+      if (value >= 70) {
+        return 'grade-medium';
+      }
+      if (value >= 60) {
+        return 'grade-pass';
+      }
+      return 'grade-fail';
+    },
     formatDateTime(value) {
       if (!value) {
         return '';
@@ -636,41 +684,40 @@ export default {
 
 .hero-panel {
   padding: 28px;
-  border-radius: 30px;
+  border-radius: var(--radius-xl);
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.9fr);
   gap: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(244, 251, 255, 0.68)),
-    radial-gradient(circle at top right, rgba(20, 184, 197, 0.12), transparent 30%);
 }
 
 .hero-kicker,
 .dialog-kicker {
   display: inline-flex;
   padding: 7px 12px;
-  border-radius: 999px;
-  background: rgba(15, 127, 153, 0.09);
-  color: #0f7f99;
-  font-size: 12px;
-  letter-spacing: 0.08em;
+  border-radius: var(--radius-sm);
+  background: var(--accent-violet-soft);
+  color: var(--accent-violet);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 700;
 }
 
 .hero-copy h1 {
   margin: 16px 0 12px;
+  font-family: var(--font-display);
   font-size: 40px;
-  line-height: 1.16;
-  color: #132035;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: var(--text-main);
 }
 
 .hero-copy p {
   margin: 0;
   max-width: 680px;
   line-height: 1.8;
-  color: #61708d;
+  color: var(--text-secondary);
 }
 
 .hero-actions {
@@ -681,38 +728,31 @@ export default {
 .hero-action {
   position: relative;
   min-height: 128px;
-  border-radius: 26px;
-  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
   padding: 22px;
   text-align: left;
   cursor: pointer;
   overflow: hidden;
-  transition: transform 0.28s ease, box-shadow 0.28s ease;
-}
-
-.hero-action::after {
-  content: '';
-  position: absolute;
-  inset: auto -18% -44% auto;
-  width: 160px;
-  height: 160px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
-  filter: blur(10px);
+  transition: transform var(--duration-normal) var(--ease-product), box-shadow var(--duration-normal) var(--ease-product), border-color var(--duration-normal) var(--ease-product);
 }
 
 .hero-action:hover {
   transform: translateY(-2px);
-  box-shadow: 0 20px 50px rgba(18, 35, 61, 0.12);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-hover);
 }
 
 .hero-action span {
   position: relative;
   z-index: 1;
   display: block;
-  font-size: 22px;
-  font-weight: 700;
-  color: #132035;
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
 }
 
 .hero-action small {
@@ -720,17 +760,12 @@ export default {
   z-index: 1;
   display: block;
   margin-top: 12px;
-  color: rgba(19, 32, 53, 0.68);
+  color: var(--text-secondary);
   line-height: 1.7;
 }
 
-.hero-action.primary {
-  background: linear-gradient(135deg, rgba(214, 249, 253, 0.92), rgba(242, 252, 255, 0.86));
-}
-
-.hero-action.secondary {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(240, 246, 255, 0.86));
-}
+.hero-action.primary { border-left: 3px solid var(--accent-violet); }
+.hero-action.secondary { border-left: 3px solid var(--accent-cyan); }
 
 .loading-shell,
 .placeholder-panel,
@@ -741,8 +776,8 @@ export default {
 .summary-card,
 .advice-card,
 .process-card {
-  border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line);
 }
 
 .loading-shell,
@@ -758,13 +793,13 @@ export default {
 .block-title,
 .dialog-heading {
   margin: 0;
-  color: #172033;
+  color: var(--text-main);
 }
 
 .loading-shell p,
 .placeholder-panel p {
   margin: 10px 0 0;
-  color: #66758f;
+  color: var(--text-secondary);
 }
 
 .beam-loader {
@@ -776,8 +811,8 @@ export default {
 .beam-loader span {
   display: block;
   height: 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(20, 184, 197, 0.15), rgba(20, 184, 197, 0.8), rgba(20, 184, 197, 0.15));
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
   background-size: 220% 100%;
   animation: beamMove 1.3s linear infinite;
 }
@@ -791,12 +826,12 @@ export default {
 }
 
 .beam-loader-green span {
-  background: linear-gradient(90deg, rgba(42, 181, 116, 0.15), rgba(42, 181, 116, 0.84), rgba(42, 181, 116, 0.15));
+  background: linear-gradient(90deg, transparent, var(--accent-lime), transparent);
   background-size: 220% 100%;
 }
 
 .beam-loader-violet span {
-  background: linear-gradient(90deg, rgba(91, 124, 250, 0.14), rgba(91, 124, 250, 0.8), rgba(91, 124, 250, 0.14));
+  background: linear-gradient(90deg, transparent, var(--accent-violet), transparent);
   background-size: 220% 100%;
 }
 
@@ -814,11 +849,12 @@ export default {
 .placeholder-icon {
   width: 74px;
   height: 74px;
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
   display: grid;
   place-items: center;
-  background: linear-gradient(180deg, #d8fbff, #edf9ff);
-  color: #0f7f99;
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
   font-weight: 800;
   letter-spacing: 0.08em;
 }
@@ -853,29 +889,30 @@ export default {
 .record-item,
 .selector-item {
   width: 100%;
-  border: none;
+  border: 1px solid var(--line);
   padding: 16px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.86);
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   gap: 14px;
   text-align: left;
-  transition: transform 0.24s ease, box-shadow 0.24s ease;
+  transition: transform var(--duration-normal) var(--ease-product), box-shadow var(--duration-normal) var(--ease-product), border-color var(--duration-normal) var(--ease-product);
   min-width: 0;
 }
 
 .record-item:hover,
 .selector-item:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 34px rgba(18, 35, 61, 0.08);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-hover);
 }
 
 .record-item.active,
 .selector-item.active {
-  outline: 2px solid rgba(20, 184, 197, 0.2);
-  background: linear-gradient(180deg, #ffffff, #f0fbfc);
+  border-color: var(--accent-violet);
+  background: var(--accent-violet-soft);
 }
 
 .record-name,
@@ -885,7 +922,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #172033;
+  color: var(--text-main);
   font-weight: 700;
 }
 
@@ -893,7 +930,7 @@ export default {
 .selector-time,
 .score-date {
   margin-top: 6px;
-  color: #7d89a0;
+  color: var(--text-tertiary);
   font-size: 13px;
 }
 
@@ -901,17 +938,17 @@ export default {
   flex: 0 0 44px;
   min-width: 44px;
   height: 44px;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   display: grid;
   place-items: center;
-  background: rgba(20, 184, 197, 0.12);
-  color: #0f7f99;
+  background: var(--accent-violet-soft);
+  color: var(--accent-violet);
   font-weight: 700;
 }
 
 .empty-state,
 .muted-text {
-  color: #7d89a0;
+  color: var(--text-tertiary);
   line-height: 1.8;
 }
 
@@ -932,16 +969,17 @@ export default {
 .workspace-panel::-webkit-scrollbar-track,
 .records-list::-webkit-scrollbar-track,
 .selector-list::-webkit-scrollbar-track {
-  background: rgba(214, 227, 239, 0.7);
-  border-radius: 999px;
+  background: transparent;
+  border-radius: var(--radius-pill);
 }
 
 .workspace-panel::-webkit-scrollbar-thumb,
 .records-list::-webkit-scrollbar-thumb,
 .selector-list::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(20, 184, 197, 0.78), rgba(15, 127, 153, 0.76));
-  border-radius: 999px;
-  border: 2px solid rgba(214, 227, 239, 0.7);
+  background: var(--line-strong);
+  border-radius: var(--radius-pill);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .report-top {
@@ -965,14 +1003,17 @@ export default {
 }
 
 .score-title {
-  font-size: 18px;
+  font-family: var(--font-mono);
+  font-size: 12px;
   font-weight: 700;
-  color: #3ab58c;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-lime);
 }
 
 .score-name {
   margin-top: 10px;
-  color: #172033;
+  color: var(--text-main);
   font-size: 16px;
 }
 
@@ -984,20 +1025,52 @@ export default {
 }
 
 .score-main strong {
+  font-family: var(--font-display);
   font-size: 60px;
   line-height: 1;
-  color: #1f2530;
+  letter-spacing: -0.04em;
+  color: var(--text-main);
 }
 
 .score-main span {
   padding-bottom: 8px;
-  color: #79859b;
+  color: var(--text-tertiary);
   font-size: 18px;
 }
 
+.grade-pill {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  align-self: center;
+}
+
+.record-grade {
+  display: inline-flex;
+  margin-top: 8px;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.grade-excellent { color: var(--accent-lime); background: var(--accent-lime-soft); }
+.grade-good { color: var(--accent-cyan); background: var(--accent-cyan-soft); }
+.grade-medium { color: var(--accent-violet); background: var(--accent-violet-soft); }
+.grade-pass { color: var(--accent-orange); background: var(--accent-orange-soft); }
+.grade-fail { color: var(--accent-rose); background: var(--accent-rose-soft); }
+.grade-na { color: var(--text-tertiary); background: var(--surface-muted); }
+
 .block-title {
+  font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 650;
+  letter-spacing: -0.02em;
 }
 
 .report-middle {
@@ -1013,16 +1086,16 @@ export default {
 
 .skill-chip {
   padding: 8px 14px;
-  border-radius: 999px;
-  background: #eefbf6;
-  color: #34a873;
+  border-radius: var(--radius-sm);
+  background: var(--accent-lime-soft);
+  color: var(--accent-lime);
   font-weight: 600;
 }
 
 .summary-card p,
 .advice-card p {
   margin: 18px 0 0;
-  color: #48556c;
+  color: var(--text-secondary);
   line-height: 1.9;
 }
 
@@ -1037,9 +1110,9 @@ export default {
 .evaluation-item,
 .question-card {
   padding: 22px;
-  border-radius: 24px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(246, 250, 255, 0.92));
-  border: 1px solid rgba(217, 231, 244, 0.8);
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
 }
 
 .question-meta {
@@ -1055,9 +1128,10 @@ export default {
   min-width: 44px;
   height: 32px;
   padding: 0 12px;
-  border-radius: 999px;
-  background: rgba(20, 184, 197, 0.12);
-  color: #0f7f99;
+  border-radius: var(--radius-sm);
+  background: var(--accent-cyan-soft);
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
   font-weight: 700;
 }
 
@@ -1066,23 +1140,23 @@ export default {
   align-items: center;
   padding: 0 12px;
   height: 32px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   font-weight: 700;
 }
 
 .is-easy {
-  color: #2ab574;
-  background: rgba(42, 181, 116, 0.14);
+  color: var(--accent-lime);
+  background: var(--accent-lime-soft);
 }
 
 .is-medium {
-  color: #d39a07;
-  background: rgba(243, 193, 58, 0.18);
+  color: var(--accent-orange);
+  background: var(--accent-orange-soft);
 }
 
 .is-hard {
-  color: #e25555;
-  background: rgba(226, 85, 85, 0.14);
+  color: var(--accent-rose);
+  background: var(--accent-rose-soft);
 }
 
 .process-item h4,
@@ -1090,7 +1164,7 @@ export default {
 .question-card h3 {
   margin: 16px 0 0;
   line-height: 1.65;
-  color: #172033;
+  color: var(--text-main);
 }
 
 .answer-block,
@@ -1102,14 +1176,14 @@ export default {
 .answer-panel label {
   display: inline-block;
   margin-bottom: 10px;
-  color: #60718c;
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 700;
 }
 
 .answer-block p {
   margin: 0;
-  color: #4a5870;
+  color: var(--text-secondary);
   line-height: 1.85;
 }
 
@@ -1128,8 +1202,10 @@ export default {
 
 .dialog-heading {
   margin-top: 8px;
+  font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 650;
+  letter-spacing: -0.02em;
 }
 
 .session-body {
@@ -1149,14 +1225,12 @@ export default {
 
 .nav-btn {
   min-width: 128px;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
 }
 
 .interview-page /deep/ .interview-dialog {
-  border-radius: 32px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(252, 254, 255, 0.96), rgba(242, 247, 255, 0.96));
-  backdrop-filter: blur(20px);
 }
 
 .interview-page /deep/ .interview-dialog .el-dialog__header {
@@ -1168,11 +1242,9 @@ export default {
 }
 
 .interview-page /deep/ .el-textarea__inner {
-  border-radius: 18px;
+  border-radius: var(--radius-md);
   min-height: 260px;
   padding: 16px 18px;
-  border-color: rgba(198, 213, 226, 0.9);
-  background: rgba(255, 255, 255, 0.82);
 }
 
 .question-slide-next-enter-active,

@@ -509,11 +509,12 @@ export default {
 
 <style scoped>
 .resume-page {
-  min-height: 100vh;
+  min-height: 100%;
   padding: 26px;
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
   gap: 24px;
+  color: var(--text-main);
 }
 
 .resume-list-panel {
@@ -521,7 +522,7 @@ export default {
   flex-direction: column;
   min-height: calc(100vh - 52px);
   padding: 24px 18px 18px;
-  border-radius: 28px;
+  border-radius: var(--radius-xl);
 }
 
 .panel-header {
@@ -540,43 +541,48 @@ export default {
 }
 
 .resume-list-item {
+  position: relative;
   width: 100%;
-  border: none;
+  border: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 18px 16px;
-  border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 10px 24px rgba(17, 35, 63, 0.06);
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
   cursor: pointer;
   text-align: left;
+  transition: transform var(--duration-normal) var(--ease-product), border-color var(--duration-normal) var(--ease-product), box-shadow var(--duration-normal) var(--ease-product);
+}
+
+.resume-list-item:hover {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-hover);
 }
 
 .resume-list-item.active {
-  outline: 2px solid rgba(20, 184, 197, 0.24);
-  background: linear-gradient(180deg, #ffffff, #f0fbfc);
+  border-color: var(--accent-rose);
+  background: var(--accent-rose-soft);
 }
 
 .resume-list-title {
   font-size: 17px;
   font-weight: 700;
-  color: #172033;
+  color: var(--text-main);
 }
 
 .resume-list-date {
   margin-top: 6px;
-  color: #95a1b8;
+  color: var(--text-tertiary);
   font-size: 13px;
 }
 
 .create-btn {
   margin-top: 18px;
   height: 48px;
-  border: none;
-  border-radius: 18px;
-  background: linear-gradient(90deg, #0f8c9d, #14b8c5);
+  border-radius: var(--radius-lg);
 }
 
 .resume-detail-panel {
@@ -588,7 +594,7 @@ export default {
 
 .resume-hero {
   padding: 28px;
-  border-radius: 28px;
+  border-radius: var(--radius-xl);
 }
 
 .resume-hero-top {
@@ -601,33 +607,41 @@ export default {
 .resume-form-name {
   display: inline-block;
   padding: 6px 12px;
-  border-radius: 999px;
-  color: #0f7f99;
-  background: rgba(20, 184, 197, 0.12);
-  font-size: 13px;
+  border-radius: var(--radius-sm);
+  color: var(--accent-rose);
+  background: var(--accent-rose-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   margin-bottom: 14px;
 }
 
 .resume-hero h2 {
   margin: 0;
+  font-family: var(--font-display);
   font-size: 34px;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
 }
 
 .resume-hero p {
   margin: 10px 0 0;
-  color: #3ab58c;
-  font-weight: 700;
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 .profile-icon {
   width: 76px;
   height: 76px;
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
   display: grid;
   place-items: center;
-  background: linear-gradient(180deg, #eafcff, #d8f6f8);
-  color: #0f7f99;
-  font-size: 26px;
+  background: var(--accent-rose-soft);
+  color: var(--accent-rose);
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 800;
 }
 
 .detail-grid {
@@ -639,13 +653,16 @@ export default {
 .detail-card,
 .detail-placeholder {
   padding: 22px;
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
 }
 
 .detail-card h3,
 .detail-placeholder h3 {
   margin: 0 0 18px;
+  font-family: var(--font-display);
   font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
 }
 
 .tag-group {
@@ -656,9 +673,9 @@ export default {
 
 .skill-tag {
   padding: 7px 12px;
-  border-radius: 999px;
-  background: #eefbf6;
-  color: #34a873;
+  border-radius: var(--radius-sm);
+  background: var(--accent-lime-soft);
+  color: var(--accent-lime);
   font-size: 13px;
   font-weight: 600;
 }
@@ -666,7 +683,7 @@ export default {
 .timeline-item + .timeline-item {
   margin-top: 18px;
   padding-top: 18px;
-  border-top: 1px solid rgba(23, 32, 51, 0.08);
+  border-top: 1px solid var(--line);
 }
 
 .timeline-header {
@@ -674,16 +691,17 @@ export default {
   justify-content: space-between;
   gap: 12px;
   font-size: 14px;
+  color: var(--text-main);
 }
 
 .timeline-header span,
 .timeline-item small {
-  color: #8c98b0;
+  color: var(--text-tertiary);
 }
 
 .timeline-item p {
   margin: 8px 0 6px;
-  color: #25314b;
+  color: var(--text-secondary);
 }
 
 .timeline-item small {
@@ -706,7 +724,7 @@ export default {
 .detail-placeholder p,
 .empty-block p,
 .empty-line {
-  color: #7c8aa5;
+  color: var(--text-secondary);
 }
 
 .detail-loading {
@@ -721,6 +739,7 @@ export default {
 
 .form-section h4 {
   margin: 8px 0 14px;
+  color: var(--text-main);
 }
 
 .grid-span-2 {

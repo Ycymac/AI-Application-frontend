@@ -6,6 +6,7 @@ import InterviewCenter from '@/views/InterviewCenter.vue';
 import IntentNodeManager from '@/views/IntentNodeManager.vue';
 import KnowledgeBaseManager from '@/views/KnowledgeBaseManager.vue';
 import KnowledgeChat from '@/views/KnowledgeChat.vue';
+import ProjectIntro from '@/views/ProjectIntro.vue';
 import ResumeManager from '@/views/ResumeManager.vue';
 import WorkspaceLayout from '@/views/WorkspaceLayout.vue';
 
@@ -29,6 +30,11 @@ const router = new Router({
       component: WorkspaceLayout,
       meta: { requiresAuth: true },
       children: [
+        {
+          path: 'project-intro',
+          name: 'project-intro',
+          component: ProjectIntro
+        },
         {
           path: 'resumes',
           name: 'resumes',

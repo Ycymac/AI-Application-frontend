@@ -322,14 +322,14 @@ export default {
 </script>
 
 <style scoped>
-.intent-page { min-height: 100vh; padding: 24px; }
-.page-card { min-height: calc(100vh - 48px); border-radius: 28px; padding: 24px; }
+.intent-page { min-height: 100%; padding: 24px; color: var(--text-main); }
+.page-card { min-height: calc(100vh - 48px); border-radius: var(--radius-xl); padding: 24px; }
 .page-head, .batch-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .batch-bar { margin: 18px 0; justify-content: flex-start; }
 .action-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .search-input { width: 280px; }
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
-.danger-text { color: #df5b5b; }
+.danger-text { color: var(--accent-rose); }
 @media (max-width: 900px) {
   .intent-page { padding: 18px; }
   .page-head { flex-direction: column; align-items: stretch; }
