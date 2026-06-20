@@ -200,7 +200,20 @@
           <el-input v-model.trim="kbForm.name"></el-input>
         </el-form-item>
         <el-form-item label="嵌入模型" prop="embeddingModel">
-          <el-input v-model.trim="kbForm.embeddingModel"></el-input>
+          <el-select
+            v-model="kbForm.embeddingModel"
+            filterable
+            placeholder="请选择嵌入模型"
+            :loading="embeddingModelLoading"
+            style="width: 100%;"
+          >
+            <el-option
+              v-for="item in embeddingModelSelectOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer">
@@ -355,6 +368,7 @@ import {
   enableKnowledgeChunk,
   fetchKnowledgeBaseDetail,
   fetchKnowledgeBasePage,
+  fetchKnowledgeEmbeddingModels,
   fetchKnowledgeChunks,
   fetchKnowledgeDocumentChunkLogs,
   fetchKnowledgeDocumentDetail,
@@ -396,6 +410,33 @@ function normalizePage(result) {
   };
 }
 
+function normalizeEmbeddingModelOptions(result) {
+  const models = (result && result.data) || {};
+
+  if (Array.isArray(models)) {
+    return models
+      .map(item => {
+        if (typeof item === 'string') {
+          return { label: item, value: item };
+        }
+        const value = item.value || item.model || item.modelId || item.name;
+        const label = item.label || item.name || item.model || value;
+        return value ? { label, value } : null;
+      })
+      .filter(Boolean);
+  }
+
+  return Object.keys(models)
+    .filter(provider => models[provider])
+    .map(provider => {
+      const model = models[provider];
+      return {
+        label: `${provider} - ${model}`,
+        value: model
+      };
+    });
+}
+
 export default {
   name: 'KnowledgeBaseManager',
   data() {
@@ -404,6 +445,8 @@ export default {
       kbDialogVisible: false,
       kbDialogMode: 'create',
       submittingKb: false,
+      embeddingModelLoading: false,
+      embeddingModelOptions: [],
       knowledgeBases: [],
       kbTotal: 0,
       kbQuery: { current: 1, size: 8, name: '' },
@@ -434,7 +477,7 @@ export default {
       kbForm: createKbForm(),
       kbRules: {
         name: [{ required: true, message: '请输入知识库名称', trigger: 'blur' }],
-        embeddingModel: [{ required: true, message: '请输入嵌入模型', trigger: 'blur' }]
+        embeddingModel: [{ required: true, message: '请选择嵌入模型', trigger: 'change' }]
       },
       docRules: {
         sourceType: [{ required: true, message: '请选择来源类型', trigger: 'change' }],
@@ -444,10 +487,43 @@ export default {
       }
     };
   },
+  computed: {
+    embeddingModelSelectOptions() {
+      if (
+        !this.kbForm.embeddingModel ||
+        this.embeddingModelOptions.some(item => item.value === this.kbForm.embeddingModel)
+      ) {
+        return this.embeddingModelOptions;
+      }
+      return [
+        ...this.embeddingModelOptions,
+        {
+          label: this.kbForm.embeddingModel,
+          value: this.kbForm.embeddingModel
+        }
+      ];
+    }
+  },
   created() {
     this.loadKnowledgeBases();
   },
   methods: {
+    async loadEmbeddingModels(options = {}) {
+      this.embeddingModelLoading = true;
+      try {
+        const result = await fetchKnowledgeEmbeddingModels();
+        this.embeddingModelOptions = normalizeEmbeddingModelOptions(result);
+        if (!this.embeddingModelOptions.length) {
+          this.$message.warning('暂无可选嵌入模型配置');
+        }
+      } catch (error) {
+        this.embeddingModelOptions = [];
+        this.$message.error(error.message || '获取嵌入模型配置失败');
+      } finally {
+        this.embeddingModelLoading = false;
+      }
+      return options.required ? this.embeddingModelOptions : [];
+    },
     async loadKnowledgeBases() {
       this.kbLoading = true;
       try {
@@ -516,6 +592,9 @@ export default {
     },
     openKbDialog(mode) {
       this.kbDialogMode = mode;
+      if (!this.embeddingModelOptions.length) {
+        this.loadEmbeddingModels({ required: true });
+      }
       if (mode === 'edit' && this.activeKb) {
         this.kbForm = {
           id: this.activeKb.id,

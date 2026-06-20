@@ -174,6 +174,14 @@ export function fetchKnowledgeBasePage(params) {
   return knowledgeHttp.get('/api/knowledge/knowledge-base', { params });
 }
 
+export function fetchKnowledgeEmbeddingModels() {
+  return requestFirst('get', [
+    { client: knowledgeHttp, path: '/api/knowledge/embeddingModel' },
+    { client: knowledgeHttp, path: '/api/knowledge/embedding-model' },
+    { client: knowledgeHttp, path: '/api/knowledge/knowledge-base/embeddingModel' }
+  ]);
+}
+
 export function fetchKnowledgeBaseDetail(kbId) {
   return knowledgeHttp.get(`/api/knowledge/knowledge-base/${kbId}`);
 }

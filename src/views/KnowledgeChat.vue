@@ -70,7 +70,12 @@
               </div>
             </div>
             <div v-if="item.thinking" class="thinking-block">{{ item.thinking }}</div>
-            <div class="message-content">{{ item.content }}</div>
+            <div
+              v-if="shouldRenderMarkdown(item)"
+              class="message-content markdown-content"
+              v-html="renderMarkdown(item.content)"
+            ></div>
+            <div v-else class="message-content plain-content">{{ item.content }}</div>
             <div v-if="!item.pending" class="message-time">{{ formatDateTime(item.createTime) }}</div>
           </div>
         </div>
@@ -384,6 +389,86 @@ export default {
       const numericId = Number(value);
       return Number.isNaN(numericId) ? null : numericId;
     },
+    shouldRenderMarkdown(item) {
+      return item && item.role !== 'user';
+    },
+    renderMarkdown(content = '') {
+      if (!content) {
+        return '';
+      }
+
+      const lines = String(content).replace(/\r\n/g, '\n').split('\n');
+      const html = [];
+      let listType = '';
+
+      const closeList = () => {
+        if (listType) {
+          html.push(`</${listType}>`);
+          listType = '';
+        }
+      };
+
+      const openList = type => {
+        if (listType === type) {
+          return;
+        }
+        closeList();
+        html.push(`<${type}>`);
+        listType = type;
+      };
+
+      const pushParagraph = line => {
+        closeList();
+        html.push(`<p>${this.renderInlineMarkdown(line)}</p>`);
+      };
+
+      lines.forEach(line => {
+        if (!line.trim()) {
+          closeList();
+          return;
+        }
+
+        const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+        if (headingMatch) {
+          closeList();
+          const level = Math.min(headingMatch[1].length, 4);
+          html.push(`<h${level}>${this.renderInlineMarkdown(headingMatch[2])}</h${level}>`);
+          return;
+        }
+
+        const unorderedMatch = line.match(/^\s*[-*+]\s+(.+)$/);
+        if (unorderedMatch) {
+          openList('ul');
+          html.push(`<li>${this.renderInlineMarkdown(unorderedMatch[1])}</li>`);
+          return;
+        }
+
+        const orderedMatch = line.match(/^\s*\d+[.)]\s+(.+)$/);
+        if (orderedMatch) {
+          openList('ol');
+          html.push(`<li>${this.renderInlineMarkdown(orderedMatch[1])}</li>`);
+          return;
+        }
+
+        pushParagraph(line);
+      });
+
+      closeList();
+      return html.join('');
+    },
+    renderInlineMarkdown(text = '') {
+      return this.escapeHtml(text)
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    },
+    escapeHtml(value = '') {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    },
     formatDateTime(value) {
       if (!value) {
         return '';
@@ -422,9 +507,23 @@ export default {
 .message-list { flex: 1; min-height: 0; margin: 22px 0 16px; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; gap: 16px; padding-right: 8px; }
 .message-row { display: flex; }
 .message-row.user { justify-content: flex-end; }
-.message-bubble { max-width: 78%; padding: 16px 18px; border-radius: 24px; background: rgba(255,255,255,0.9); color: #24314b; box-shadow: 0 10px 24px rgba(17, 35, 63, 0.06); white-space: pre-wrap; line-height: 1.8; }
+.message-bubble { max-width: 78%; padding: 16px 18px; border-radius: 24px; background: rgba(255,255,255,0.9); color: #24314b; box-shadow: 0 10px 24px rgba(17, 35, 63, 0.06); line-height: 1.8; }
 .message-bubble.pending { min-width: min(440px, 100%); }
 .message-row.user .message-bubble { background: linear-gradient(135deg, #d8fbff, #eff9ff); }
+.message-content { overflow-wrap: anywhere; word-break: break-word; }
+.plain-content, .thinking-block { white-space: pre-wrap; }
+.markdown-content /deep/ h1, .markdown-content /deep/ h2, .markdown-content /deep/ h3, .markdown-content /deep/ h4 { margin: 18px 0 10px; color: #172033; line-height: 1.45; font-weight: 800; }
+.markdown-content /deep/ h1:first-child, .markdown-content /deep/ h2:first-child, .markdown-content /deep/ h3:first-child, .markdown-content /deep/ h4:first-child { margin-top: 0; }
+.markdown-content /deep/ h1 { font-size: 22px; }
+.markdown-content /deep/ h2 { font-size: 20px; }
+.markdown-content /deep/ h3 { font-size: 18px; }
+.markdown-content /deep/ h4 { font-size: 16px; }
+.markdown-content /deep/ p { margin: 0 0 10px; }
+.markdown-content /deep/ p:last-child { margin-bottom: 0; }
+.markdown-content /deep/ ul, .markdown-content /deep/ ol { margin: 8px 0 14px; padding-left: 22px; }
+.markdown-content /deep/ li { margin: 4px 0; padding-left: 2px; }
+.markdown-content /deep/ strong { color: #172033; font-weight: 800; }
+.markdown-content /deep/ code { padding: 2px 5px; border-radius: 6px; background: rgba(15, 127, 153, 0.08); color: #0f7f99; font-family: Consolas, Monaco, monospace; font-size: 0.92em; }
 .thinking-block { margin-bottom: 10px; padding: 12px; border-radius: 16px; background: rgba(15, 127, 153, 0.08); color: #0f7f99; font-size: 13px; }
 .waiting-shell { display: flex; align-items: center; gap: 18px; min-width: 0; }
 .waiting-copy h3 { margin: 0; color: #172033; font-size: 18px; }
