@@ -215,7 +215,7 @@ export default {
 <style scoped>
 .auth-page {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
   padding: clamp(20px, 4vw, 44px);
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(360px, 480px);
