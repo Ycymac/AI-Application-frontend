@@ -1,5 +1,6 @@
 <template>
   <div class="auth-page">
+    <div class="auth-backdrop" aria-hidden="true"></div>
     <section class="auth-stage" aria-label="AI 面试系统登录注册">
       <div class="stage-copy">
         <p class="mono-label">JAVIS · RAG INTERVIEW</p>
@@ -213,16 +214,39 @@ export default {
 
 <style scoped>
 .auth-page {
+  position: relative;
   min-height: 100vh;
   padding: clamp(20px, 4vw, 44px);
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(360px, 480px);
   gap: clamp(24px, 5vw, 64px);
   align-items: center;
+  overflow: hidden;
   color: var(--text-main);
   background:
     radial-gradient(circle at 10% 12%, var(--accent-cyan-soft), transparent 26%),
     radial-gradient(circle at 84% 82%, var(--accent-violet-soft), transparent 24%);
+}
+
+.auth-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: url('../assets/progress.jpg') center / cover no-repeat;
+  opacity: 0.22;
+}
+
+/* In light mode the original (dark) image is inverted for legibility */
+html[data-theme="light"] .auth-backdrop {
+  filter: invert(1) hue-rotate(180deg);
+  opacity: 0.16;
+}
+
+.auth-stage,
+.auth-panel {
+  position: relative;
+  z-index: 1;
 }
 
 .auth-stage {
