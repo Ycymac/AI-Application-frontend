@@ -215,13 +215,14 @@ export default {
 <style scoped>
 .auth-page {
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
   padding: clamp(20px, 4vw, 44px);
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(360px, 480px);
   gap: clamp(24px, 5vw, 64px);
   align-items: center;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   color: var(--text-main);
   background:
     radial-gradient(circle at 10% 12%, var(--accent-cyan-soft), transparent 26%),

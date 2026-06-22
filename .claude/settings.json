@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(py -3 _fill.py)",
+      "Bash(py -3 -c ' *)",
+      "Bash(py -3 _enrich.py)",
+      "Read(//d/allfiles/frontend_lesson_docs/**)",
+      "Bash(python -)"
+    ]
+  }
+}
